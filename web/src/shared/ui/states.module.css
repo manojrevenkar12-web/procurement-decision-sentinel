@@ -1,0 +1,78 @@
+.loading {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 36rem;
+  padding: var(--space-7) 0;
+}
+
+.line {
+  display: block;
+  height: 0.75rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--rule) 0%, var(--accent-soft) 50%, var(--rule) 100%);
+  background-size: 200% 100%;
+  animation: sweep 1.4s ease-in-out infinite;
+}
+
+.line:nth-child(2) {
+  width: 80%;
+}
+
+.line:nth-child(3) {
+  width: 55%;
+}
+
+.label {
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+@keyframes sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.error {
+  border-left: 3px solid var(--bad);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  max-width: var(--measure);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.hint {
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+.button {
+  justify-self: start;
+  font: inherit;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-5);
+  cursor: pointer;
+}
+
+.empty {
+  border: 1px dashed var(--rule-strong);
+  padding: var(--space-5);
+  max-width: var(--measure);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.empty h3 {
+  font-size: var(--step-1);
+}
+
+.empty p {
+  color: var(--ink-2);
+}

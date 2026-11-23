@@ -1,0 +1,56 @@
+# Every design meets the same world and the same luck. Flags switch one platform behaviour off at a time.
+
+designs:
+  status_quo:
+    label: Analyst reads the feed + monthly review
+    kind: analyst
+  model_alone:
+    label: Model reads the feed and names categories
+    kind: model_alone
+    model: model_a
+  platform:
+    label: Sentinel (model reads, graph and code decide)
+    kind: platform
+    model: model_a
+  tier1_only:
+    label: Sentinel without tier-2 links
+    kind: platform
+    model: model_a
+    flags: {tier2: false}
+  no_quote_check:
+    label: Sentinel without the quote check
+    kind: platform
+    model: model_a
+    flags: {quote_check: false}
+  name_match_only:
+    label: Sentinel matching suppliers by name only
+    kind: platform
+    model: model_a
+    flags: {strict_resolution: false}
+  act_on_rumours:
+    label: Sentinel acting on unconfirmed reports
+    kind: platform
+    model: model_a
+    flags: {hold_rumours: false}
+  no_memory:
+    label: Sentinel without dismissal memory
+    kind: platform
+    model: model_a
+    flags: {memory: false}
+  no_journal:
+    label: Sentinel without the workflow journal
+    kind: platform
+    model: model_a
+    flags: {journal: false}
+  no_text_dedupe:
+    label: Sentinel reading every syndicated copy
+    kind: platform
+    model: model_a
+    flags: {text_dedupe: false}
+  platform_model_b:
+    label: Sentinel on the smaller model
+    kind: platform
+    model: model_b
+
+ablations: [tier1_only, no_quote_check, name_match_only, act_on_rumours, no_memory, no_journal, no_text_dedupe]
+model_swap: [platform_model_b]

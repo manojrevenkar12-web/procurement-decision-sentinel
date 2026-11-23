@@ -1,0 +1,31 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--space-6);
+}
+
+.item {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--ink);
+}
+
+.item h3 {
+  font-size: var(--step-1);
+}
+
+.headline {
+  font-weight: 600;
+}
+
+.body {
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+.result {
+  font-weight: 550;
+  color: var(--accent);
+}

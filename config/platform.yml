@@ -1,0 +1,74 @@
+# The sentinel's own settings. platform/ and service/ read this file; world/ never does.
+
+materiality_eur: 150000
+renewal_window_days: 120
+cost_plus_pass: 0.7
+
+# The codified sourcing playbook: which lever a card proposes. First matching rule wins.
+playbook:
+  - {when: {kind: commodity_move, mechanism: [index_linked, cost_plus]}, lever: index_pass_through_check}
+  - {when: {kind: commodity_move, mechanism: [fixed]}, lever: renewal_should_cost}
+  - {when: {kind: tariff, alternate_outside_country: true}, lever: shift_volume}
+  - {when: {kind: tariff}, lever: landed_cost_requote}
+  - {when: {kind: supplier_event, event: [sanction]}, lever: stop_new_pos}
+  - {when: {kind: supplier_event, event: [esg]}, lever: corrective_action_plan}
+  - {when: {kind: supplier_event, event: [insolvency, outage], share_at_least: 0.5}, lever: dual_source_buffer}
+  - {when: {kind: supplier_event, event: [insolvency, outage]}, lever: qualify_alternate}
+
+supplier_event_stake:
+  insolvency: {single: 0.3, multi: 0.1}
+  outage: {single: 0.15, multi: 0.05}
+  sanction: {single: 0.5, multi: 0.5}
+  esg: {single: 0.05, multi: 0.05}
+single_source_share: 0.5
+
+glossary:
+  commodities:
+    copper: [copper, LME copper]
+    aluminium: [aluminium, aluminum]
+    steel_hrc: [hot-rolled coil, HRC, steel coil]
+    nickel: [nickel]
+    polypropylene: [polypropylene]
+    pet: [PET resin, PET]
+    pulp: [pulp, kraft pulp]
+    natural_gas: [natural gas, TTF gas]
+    diesel: [diesel, gasoil]
+    cotton: [cotton]
+  countries:
+    DE: [Germany, German]
+    PL: [Poland, Polish]
+    CZ: [Czech Republic, Czech]
+    IT: [Italy, Italian]
+    TR: [Turkey, Turkish]
+    CN: [China, Chinese]
+    IN: [India, Indian]
+    VN: [Vietnam, Vietnamese]
+    US: [United States, American, U.S.]
+    MX: [Mexico, Mexican]
+  legal_forms: [GmbH, AG, Sp. z o.o., S.A., s.r.o., a.s., S.p.A., S.r.l., A.S., Co., Ltd., Pvt. Ltd., JSC, Inc., LLC, S.A. de C.V.]
+  up_words: [rose, rises, jumped, climbed, up, increase, increased, gained, higher, raise, raises, imposes, impose, adds]
+  down_words: [fell, falls, dropped, slid, down, decrease, decreased, lost, lower, eased]
+  hedge_words: [reportedly, considering, is said to, sources said, people familiar, could, rumour, rumor, weighing, may impose]
+  withdrawn_words: [withdrawn, scrapped, called off, denied, dropped plans, will not impose]
+  instruction_patterns: ['ignore (all|previous|prior)', 'ai (system|assistant|agent)s?', 'note to (ai|automated)', 'flag all', 'mark (all|every)', 'instructions?']
+
+dedupe:
+  text_jaccard: 0.6 # word 3-gram Jaccard above this skips the model call
+  text_window_h: 48
+  fact_window_h: 72 # same facts within this window are one event, not a new card
+  magnitude_bucket_pct: 0.5
+
+memory:
+  suppress_factor: 1.0 # after a 'within tolerance' dismissal, re-raise only above the largest amount dismissed
+
+reader:
+  max_repairs: 1
+  system_tokens: 900
+  alone_context_tokens: 2600
+  out_tokens: 220
+  alone_out_tokens: 320
+
+# What the sentinel is billed per million tokens, for cost per decision.
+pricing:
+  model_a: {in: 2.8, cached: 0.28, out: 14.0}
+  model_b: {in: 0.9, cached: 0.09, out: 4.5}

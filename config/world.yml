@@ -1,0 +1,189 @@
+# The simulated buyer and its market. Only world/ reads this file.
+# Hidden truth lives here: true commodity weights, every tier-2 link, each category's tolerance,
+# which alternates really have capacity, which rumours come true and where the injections are.
+
+horizon_days: 56
+desk_hour: 9 # the market desk resolves held signals at 09:00
+manager_hour: 11 # managers review cards once a day at 11:00
+
+commodities:
+  copper: {label: copper, weekly_sigma: 0.035}
+  aluminium: {label: aluminium, weekly_sigma: 0.03}
+  steel_hrc: {label: hot-rolled coil, weekly_sigma: 0.04}
+  nickel: {label: nickel, weekly_sigma: 0.05}
+  polypropylene: {label: polypropylene, weekly_sigma: 0.03}
+  pet: {label: PET resin, weekly_sigma: 0.03}
+  pulp: {label: pulp, weekly_sigma: 0.025}
+  natural_gas: {label: natural gas, weekly_sigma: 0.08}
+  diesel: {label: diesel, weekly_sigma: 0.04}
+  cotton: {label: cotton, weekly_sigma: 0.03}
+
+# Commodities the buyer does not buy; articles about them are noise.
+other_commodities: [cocoa, lithium, zinc, wheat, coffee, palladium]
+
+countries:
+  DE: {name: Germany, adj: German, legal: [GmbH, AG]}
+  PL: {name: Poland, adj: Polish, legal: [Sp. z o.o., S.A.]}
+  CZ: {name: Czech Republic, adj: Czech, legal: [s.r.o., a.s.]}
+  IT: {name: Italy, adj: Italian, legal: [S.p.A., S.r.l.]}
+  TR: {name: Turkey, adj: Turkish, legal: [A.S.]}
+  CN: {name: China, adj: Chinese, legal: [Co., Ltd.]}
+  IN: {name: India, adj: Indian, legal: [Pvt. Ltd.]}
+  VN: {name: Vietnam, adj: Vietnamese, legal: [JSC]}
+  US: {name: the United States, adj: American, legal: [Inc., LLC]}
+  MX: {name: Mexico, adj: Mexican, legal: [S.A. de C.V.]}
+
+# Where suppliers sit (weights) and which countries can be hit by a tariff.
+supplier_countries: {DE: 0.3, PL: 0.14, CZ: 0.08, IT: 0.1, TR: 0.1, CN: 0.14, IN: 0.06, VN: 0.04, US: 0.02, MX: 0.02}
+tariff_countries: [CN, TR, IN, VN, US, MX]
+
+# Category: annual spend in EUR millions and the TRUE share of cost in each commodity.
+categories:
+  copper_cable: {label: Copper cable & wire, spend_m: 18, weights: {copper: 0.55, polypropylene: 0.1}}
+  alu_extrusions: {label: Aluminium extrusions, spend_m: 22, weights: {aluminium: 0.6, natural_gas: 0.08}}
+  steel_coil: {label: Hot-rolled steel coil, spend_m: 35, weights: {steel_hrc: 0.7}}
+  fasteners: {label: Fasteners, spend_m: 6, weights: {steel_hrc: 0.35, nickel: 0.05}}
+  stainless_parts: {label: Stainless machined parts, spend_m: 9, weights: {nickel: 0.25, steel_hrc: 0.2}}
+  pp_granulate: {label: Polypropylene granulate, spend_m: 14, weights: {polypropylene: 0.75}}
+  pet_preforms: {label: PET preforms, spend_m: 11, weights: {pet: 0.65}}
+  corrugated: {label: Corrugated packaging, spend_m: 13, weights: {pulp: 0.5, natural_gas: 0.1}}
+  labels: {label: Labels & sleeves, spend_m: 4, weights: {pulp: 0.3, polypropylene: 0.15}}
+  ocean_freight: {label: Ocean freight, spend_m: 16, weights: {diesel: 0.3}}
+  road_freight: {label: Road freight, spend_m: 12, weights: {diesel: 0.35}}
+  industrial_gases: {label: Industrial gases, spend_m: 7, weights: {natural_gas: 0.45}}
+  castings: {label: Iron castings, spend_m: 10, weights: {steel_hrc: 0.3, natural_gas: 0.15}}
+  pcb_assemblies: {label: PCB assemblies, spend_m: 15, weights: {copper: 0.12}}
+  motors: {label: Electric motors, spend_m: 17, weights: {copper: 0.25, steel_hrc: 0.15, aluminium: 0.08}}
+  hydraulics: {label: Hydraulic components, spend_m: 8, weights: {steel_hrc: 0.25}}
+  chemicals: {label: Specialty chemicals, spend_m: 9, weights: {natural_gas: 0.2}}
+  workwear: {label: Workwear, spend_m: 3, weights: {cotton: 0.4}}
+  mro: {label: MRO supplies, spend_m: 5, weights: {}}
+  it_hardware: {label: IT hardware, spend_m: 6, weights: {}}
+
+managers: 5 # categories are dealt round-robin to managers
+
+suppliers:
+  per_category: [2, 3, 3, 4] # drawn uniformly
+  dominant_share: 0.8 # some categories have one supplier carrying this share
+  dominant_p: 0.3
+  shared_p: 0.15 # chance a supplier also serves a second category
+  tier2_p: 0.35 # chance a supplier imports its main input from a tariff country
+  tier2_share: [0.3, 0.9] # share of that input coming from the tier-2 country
+  disclosure_p: 0.7 # share of tier-2 links the buyer knows about (supplier disclosures)
+  alt_capacity_p: 0.75 # an alternate supplier truly has spare capacity
+  lookalike_p: 0.3 # a supplier has a same-stem namesake in another country that is not ours
+
+contracts:
+  mechanism: {index_linked: 0.35, fixed: 0.45, cost_plus: 0.2}
+  cost_plus_pass: 0.7
+  renewal_days: [5, 240] # fixed contracts renew this many days after day 0
+
+materiality:
+  threshold_eur: 150000 # every manager ignores less than this
+  tolerance_pct: [0.004, 0.015] # each category's hidden tolerance for price moves, share of spend
+
+supplier_events:
+  insolvency: {p: 0.25, stake_single: 0.3, stake_multi: 0.1, horizon_days: 10, mitigable: 0.6}
+  outage: {p: 0.3, stake_single: 0.15, stake_multi: 0.05, horizon_days: 7, mitigable: 0.5}
+  sanction: {p: 0.1, stake_single: 0.5, stake_multi: 0.5, horizon_days: 3, mitigable: 1.0}
+  esg: {p: 0.35, stake_single: 0.05, stake_multi: 0.05, horizon_days: 60, mitigable: 0.3}
+
+price_events:
+  commodity_move: {horizon_days: 30, mitigable: 0.3}
+  tariff: {horizon_days: 45, mitigable: 0.5}
+
+renewal_window_days: 120 # a fixed price resets only if the contract renews within this window
+wrong_lever_factor: 0.5 # a wrong lever captures half
+
+# Daily article rates.
+rates:
+  commodity_move: 5.0
+  tariff: 0.5
+  supplier_event: 1.2
+  noise: 12.0
+tariff_targets_exposure_p: 0.6 # tariffs tend to hit big exporters, so often where the buyer is exposed
+rumour:
+  tariff_p: 0.35
+  supplier_p: 0.25
+  confirm_p: 0.5
+  follow_up_days: [2, 9]
+supplier_event_about_lookalike_p: 0.3
+syndication: {p: 0.45, copies: [1, 2], within_h: 12}
+injection_p: 0.04
+forward_hedge_p: 0.25 # a confirmed article adds a forward-looking 'may' sentence
+
+people:
+  analyst_minutes_per_day: 60 # status quo: a market analyst skims every headline, reads the relevant ones
+  analyst_skim_min: 0.25
+  analyst_read_min: 3
+  card_review_min: 6
+  hold_review_min: 8
+  manager_minutes_per_day: 24
+  desk_minutes_per_day: 60 # the market desk resolves held signals
+  monthly_review_min: 30
+  monthly_review_days: 28
+  monthly_review_finds_p: 0.7
+  accept_right_p: 0.95 # a manager accepts a truly material card
+  dismiss_right_p: 0.92 # a manager dismisses a card that is not
+  pick_lever_right_p: 0.8 # without a lever on the card, the manager picks the right one
+  catch_wrong_lever_p: 0.5 # with a wrong lever on the card, the manager catches it
+  desk_resolves_p: 0.9
+  analyst:
+    direct_p: 0.85
+    secondary_p: 0.2
+    tariff_p: 0.6
+    lookalike_fooled_p: 0.3
+    rumour_flag_p: 0.5
+
+# Simulated model readers. A design names its model in designs.yml.
+models:
+  model_a:
+    schema_fail: 0.03
+    repair_ok: 0.85
+    wrong_kind: 0.02
+    magnitude_error: 0.05
+    sign_error: 0.03
+    status_error: 0.15
+    supplier_drift: 0.08 # drops the legal form and guesses the country
+    supplier_halluc: 0.02
+    injection_obey: 0.35
+    latency_s: [2.0, 7.0]
+    alone:
+      primary_p: 0.9
+      secondary_p: 0.4
+      indirect_p: 0.1
+      false_category_p: 0.15
+      lookalike_fooled_p: 0.6
+      rumour_as_real_p: 0.6
+  model_b:
+    schema_fail: 0.08
+    repair_ok: 0.7
+    wrong_kind: 0.05
+    magnitude_error: 0.1
+    sign_error: 0.06
+    status_error: 0.25
+    supplier_drift: 0.15
+    supplier_halluc: 0.05
+    injection_obey: 0.55
+    latency_s: [1.0, 4.0]
+    alone:
+      primary_p: 0.8
+      secondary_p: 0.3
+      indirect_p: 0.05
+      false_category_p: 0.25
+      lookalike_fooled_p: 0.7
+      rumour_as_real_p: 0.7
+
+delivery:
+  redeliver_p: 0.04 # at-least-once: a message can arrive twice
+  redeliver_after_h: [1, 6]
+  crash_after_read_p: 0.03
+  crash_after_card_p: 0.03
+
+# The held-out world differs on purpose: a tariff wave, more namesakes, more injections and rumours.
+heldout:
+  tariff_wave: {day: 20, count: 10}
+  suppliers: {lookalike_p: 0.5, tier2_p: 0.45}
+  rumour: {tariff_p: 0.5, supplier_p: 0.35}
+  injection_p: 0.08
+  supplier_event_about_lookalike_p: 0.45

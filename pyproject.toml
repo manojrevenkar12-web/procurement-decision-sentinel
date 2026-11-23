@@ -1,0 +1,40 @@
+[project]
+name = "procurement-decision-sentinel"
+version = "1.0.0"
+description = "Agents watch commodity, tariff and supplier-risk signals; a knowledge graph and code turn them into evidence-cited procurement decision cards."
+requires-python = ">=3.12"
+authors = [{ name = "Manoj Kumar Prakash", email = "manojrevenkar12@gmail.com" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.26",
+  "pyyaml>=6",
+  "pydantic>=2.6",
+  "fastapi>=0.110",
+  "httpx>=0.27",
+  "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10", "types-PyYAML"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 250
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = true

@@ -1,0 +1,17 @@
+# Set from the development seeds before the held-out run. Never loosened after it (AGENTS.md).
+
+platform:
+  value_share_min_over_status_quo_pts: 5.0 # share of mitigable value captured, minus the status quo's
+  precision_min: 0.85 # share of cards that were material
+  minutes_max_ratio_to_status_quo: 0.6 # manager, desk and analyst minutes per week
+  decision_median_h_max: 24.0 # first signal to a manager's decision
+  injection_cards_max: 0
+  namesake_or_wrong_entity_cards_max: 0
+  rumour_cards_max: 0
+  duplicate_cards_max: 0
+  cost_per_accepted_card_eur_max: 0.05
+
+model_swap:
+  value_share_max_below_platform_pts: 3.0
+  precision_min: 0.85
+  minutes_max_ratio_to_platform: 1.25
